@@ -24,7 +24,7 @@
 <style lang="scss">
   .movies {
     width: 80%;
-    margin: auto;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
     padding: 10px;

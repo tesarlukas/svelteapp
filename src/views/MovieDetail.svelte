@@ -1,11 +1,37 @@
 <script>
-  import { movie } from '../stores/store.js';
+  import { movie, user, ownMovies } from '../stores/store.js';
 
   export let currentMovie = {};
+  let myMovies;
+  let currentUser;
 
   movie.subscribe((data) => {
     currentMovie = data;
   });
+
+  ownMovies.subscribe((value) => {
+    myMovies = value;
+  });
+
+  user.subscribe((value) => {
+    currentUser = value;
+  });
+  console.log(myMovies);
+
+  function addMovie() {
+    if (myMovies.find((e) => e.imdbID === currentMovie.imdbID)) return;
+    let newMovies = myMovies;
+    newMovies.push(currentMovie);
+    ownMovies.set(newMovies);
+  }
+
+  function removeMovie() {
+    if (myMovies.find((e) => e.imdbID === currentMovie.imdbID)) {
+      let newMovies = myMovies;
+      myMovies.splice(myMovies.indexOf(currentMovie), 1);
+      ownMovies.set(myMovies);
+    }
+  }
 </script>
 
 <div class="movie-detail">
@@ -18,6 +44,12 @@
     <div class="row">Writers: {currentMovie.Writer}</div>
     <div class="row">Country: {currentMovie.Country}</div>
     <div class="plot row">Plot: {currentMovie.Plot}</div>
+    {#if currentUser.username === 'admin'}
+      <button on:click={addMovie}>Add to my list</button>
+    {/if}
+    {#if currentUser.username === 'admin'}
+      <button on:click={removeMovie}>Remove from my list</button>
+    {/if}
   </div>
   <div class="gallery">
     {#each currentMovie.Images as image}

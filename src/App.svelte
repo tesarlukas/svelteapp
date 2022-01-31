@@ -1,15 +1,32 @@
 <script>
+  import * as movieList from './assets/movies.json';
+
   import { Router, Link, Route } from 'svelte-navigator';
   import Home from './views/Home.svelte';
   import Movies from './views/Movies.svelte';
   import MovieDetail from './views/MovieDetail.svelte';
-  import * as movieList from './assets/movies.json';
+  import Login from './views/Login.svelte';
+  import OwnMovies from './views/OwnMovies.svelte';
+
+  import { user } from './stores/store.js';
+
+  let currentUser;
+
+  user.subscribe((value) => {
+    currentUser = value;
+  });
 </script>
 
 <Router>
   <nav class="navbar">
     <Link to="/">Home</Link>
-    <Link to="movies">Movies</Link>
+    <Link to="/movies">Movies</Link>
+    {#if currentUser.username !== 'admin'}
+      <Link to="/login">Login</Link>
+    {/if}
+    {#if currentUser.username === 'admin'}
+      <Link to="/ownMovies">My movies</Link>
+    {/if}
   </nav>
 
   <div class="page">
@@ -19,6 +36,12 @@
     </Route>
     <Route path="/movie">
       <MovieDetail />
+    </Route>
+    <Route path="/login">
+      <Login />
+    </Route>
+    <Route path="/ownMovies">
+      <OwnMovies movies={movieList.default} />
     </Route>
     <!-- <Route path="about" component={About} />
     <Route path="blog/*">
